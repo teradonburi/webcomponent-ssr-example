@@ -1,6 +1,21 @@
 import fs from 'node:fs/promises'
 import express from 'express'
 
+import { JSDOM } from 'jsdom'
+
+// for SSR
+(function fakeWindow() {
+  const dom = new JSDOM();
+  const { window } = dom;
+    
+  // fake objects
+  // Node.js の globalThis に宣言がなければ参照を追加
+  globalThis.DOMException ??= window.DOMException; // Node.js v18 以降では不要
+  globalThis.document ??= window.document;
+  globalThis.HTMLElement ??= window.HTMLElement;
+  globalThis.customElements ??= window.customElements;  
+})()
+
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
 const port = process.env.PORT || 5173

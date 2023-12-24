@@ -1,4 +1,6 @@
-export * from './webcomponents/custom-button'
+import { CustomButton } from './webcomponents/custom-button'
+
+customElements.get('custom-button') || customElements.define('custom-button', CustomButton);
 
 // polyfill for declarative shadow dom
 // https://developer.chrome.com/docs/css-ui/declarative-shadow-dom

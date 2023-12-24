@@ -1,11 +1,11 @@
 // custom-button.ts
 
 export class CustomButton extends HTMLElement {
-  private _text: string;
+  private text: string;
 
   constructor({text = 'Click me!'}: {text: string}) {
     super();
-    this._text = text;
+    this.text = text;
 
     this.attachShadow({ mode: 'open' });
     this.render();
@@ -19,7 +19,7 @@ export class CustomButton extends HTMLElement {
     if (oldValue !== newValue) {
       switch (name) {
         case 'text':
-          this._text = newValue || '';
+          this.text = newValue || '';
           break;
       }
       this.render();
@@ -33,10 +33,10 @@ export class CustomButton extends HTMLElement {
 
   private render() {
     if (!this.shadowRoot) return 
-    this.shadowRoot.innerHTML = CustomButton.render(this._text);
+    this.shadowRoot.innerHTML = CustomButton.render(this);
   }
 
-  public static render(text: string) {
+  public static render(args: any) {
     return `
       <style>
         /* Add your styles here */
@@ -52,7 +52,7 @@ export class CustomButton extends HTMLElement {
           cursor: not-allowed;
         }
       </style>
-      <button>${text}</button>
+      <button>${args?.text}</button>
     `
   }
 
@@ -61,15 +61,18 @@ export class CustomButton extends HTMLElement {
   
     for (const element of elements) {
       const attributes = element.attributes
-      for (const attribute of attributes) {
-        // render declative shadow dom
-        const buttonHtml = `
-          <template shadowrootmode="open">
-            ${CustomButton.render(attribute.value)}
-          </template>
-        `
-        element.innerHTML = buttonHtml
+
+      const args: any = {}
+      for (const attr of attributes) {
+        args[attr.name] = attr.value
       }
+      // render declative shadow dom
+      const buttonHtml = `
+        <template shadowrootmode="open">
+          ${CustomButton.render(args)}
+        </template>
+      `
+      element.innerHTML = buttonHtml
     }
   
     return document.documentElement.outerHTML
@@ -81,4 +84,3 @@ export class CustomButton extends HTMLElement {
   }
 }
 
-customElements.get('custom-button') || customElements.define('custom-button', CustomButton);
