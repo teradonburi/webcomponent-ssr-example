@@ -1,11 +1,10 @@
 // custom-button.ts
 
 export class CustomButton extends HTMLElement {
-  private text: string;
+  private text: string = '';
 
-  constructor({text = 'Click me!'}: {text: string}) {
+  constructor() {
     super();
-    this.text = text;
 
     this.attachShadow({ mode: 'open' });
     this.render();
@@ -75,6 +74,7 @@ export class CustomButton extends HTMLElement {
       element.innerHTML = buttonHtml
     }
   
+    console.log(document.documentElement.outerHTML)
     return document.documentElement.outerHTML
   }
 
