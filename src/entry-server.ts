@@ -1,5 +1,19 @@
-import { renderButton } from './webcomponents/render-custom-button'
-import {JSDOM} from 'jsdom'
+import { JSDOM } from 'jsdom'
+
+// for SSR
+if (typeof window === 'undefined') {
+  const dom = new JSDOM();
+  const { window } = dom;
+    
+  // fake objects
+  // Node.js の globalThis に宣言がなければ参照を追加
+  globalThis.DOMException ??= window.DOMException; // Node.js v18 以降では不要
+  globalThis.document ??= window.document;
+  globalThis.HTMLElement ??= window.HTMLElement;
+  globalThis.customElements ??= window.customElements;  
+} 
+
+import { CustomButton } from './webcomponents/custom-button'
 
 export function render() {
   const text = `I'm a custom button!`
@@ -11,26 +25,9 @@ export function render() {
   `
 
   const dom = new JSDOM(htmlString);
-  const html = renderCustomButton(dom.window.document)
+  const document = dom.window.document
+
+  const html = CustomButton.renderSSR(document)
 
   return { html }
-}
-
-const renderCustomButton = (dom: Document) => {
-  const elements = dom.querySelectorAll('custom-button')
-
-  for (const element of elements) {
-    const attributes = element.attributes
-    for (const attribute of attributes) {
-      // render declative shadow dom
-      const buttonHtml = `
-        <template shadowrootmode="open">
-          ${renderButton(attribute.value)}
-        </template>
-      `
-      element.innerHTML = buttonHtml
-    }
-  }
-
-  return dom.documentElement.outerHTML
 }
