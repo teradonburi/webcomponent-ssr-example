@@ -11,7 +11,7 @@ export class CustomButton extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['text', 'disabled'];
+    return ['text'];
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
